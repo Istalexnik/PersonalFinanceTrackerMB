@@ -1,0 +1,71 @@
+﻿@page "/add-transaction"
+@inject NavigationManager NavigationManager
+@inject PersonalFinanceTrackerMB.Services.TransactionService TransactionService
+@using PersonalFinanceTrackerMB.Models
+
+<h3>Add Transaction</h3>
+
+<div class="form-group">
+    <label>Amount</label>
+    <input type="number"
+           @bind="amount"
+           placeholder="Enter amount"
+           class="form-control"
+           @onfocus="ClearAmount" />
+</div>
+<div class="form-group">
+    <label>Category</label>
+    <input @bind="category" class="form-control" placeholder="e.g., Food, Rent" />
+</div>
+<div class="form-group">
+    <label>Date</label>
+    <input type="date" @bind="date" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Type</label>
+    <select @bind="type" class="form-control">
+        <option value="Income">Income</option>
+        <option value="Expense">Expense</option>
+    </select>
+</div>
+
+<button @onclick="SubmitTransaction" class="btn btn-primary">Add Transaction</button>
+<button @onclick="NavigateBack" class="btn btn-secondary ml-2">Back</button>
+
+@code {
+    private decimal? amount; // Nullable decimal to avoid initial 0 display
+    private string category = string.Empty;
+    private DateTime date = DateTime.Now;
+    private string type = "Expense";
+
+    private async Task SubmitTransaction()
+    {
+        var transaction = new Transaction
+            {
+                Amount = amount ?? 0, // Ensure amount is not null before saving
+                Category = category,
+                Date = date,
+                Type = type
+            };
+
+        await TransactionService.AddTransactionAsync(transaction);
+
+        // Reset form fields after submission
+        amount = null;
+        category = string.Empty;
+        date = DateTime.Now;
+        type = "Expense";
+    }
+
+    // Clear the amount input when it gains focus
+    private void ClearAmount(FocusEventArgs e)
+    {
+        amount = null;
+    }
+
+    // Navigate back to the previous page
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/", true); // Change "/" to any specific route if needed
+    }
+}

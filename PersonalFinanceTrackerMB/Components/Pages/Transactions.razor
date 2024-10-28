@@ -1,0 +1,38 @@
+﻿@page "/transactions"
+@inject PersonalFinanceTrackerMB.Services.TransactionService TransactionService
+@using PersonalFinanceTrackerMB.Models;
+
+<h3>Transaction History</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in transactions)
+        {
+            <tr>
+                <td>@transaction.Id</td>
+                <td>@transaction.Amount</td>
+                <td>@transaction.Category</td>
+                <td>@transaction.Date.ToShortDateString()</td>
+                <td>@transaction.Type</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Transaction> transactions = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        transactions = await TransactionService.GetTransactionsAsync();
+    }
+}

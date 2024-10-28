@@ -1,0 +1,27 @@
+﻿@page "/"
+@inject Services.TransactionService TransactionService
+
+<h3>Finance Summary</h3>
+
+<p>Total Income: @totalIncome</p>
+<p>Total Expenses: @totalExpenses</p>
+<p>Balance: @(totalIncome - totalExpenses)</p>
+
+<h3>Recent Transactions</h3>
+<div>
+    <a href="/add-transaction" class="btn btn-primary">Add New Transaction</a>
+</div>
+<div>
+    <a href="/transactions" class="btn btn-secondary mt-2 ">View All Transactions</a>
+</div>
+
+@code {
+    private decimal totalIncome;
+    private decimal totalExpenses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        totalIncome = await TransactionService.GetTotalIncomeAsync();
+        totalExpenses = await TransactionService.GetTotalExpensesAsync();
+    }
+}

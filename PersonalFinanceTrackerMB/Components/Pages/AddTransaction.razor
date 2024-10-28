@@ -32,11 +32,21 @@
 <button @onclick="SubmitTransaction" class="btn btn-primary">Add Transaction</button>
 <button @onclick="NavigateBack" class="btn btn-secondary ml-2">Back</button>
 
+
+@if (showConfirmation)
+{
+    <div class="alert alert-success mt-3" role="alert">
+        Transaction successfully submitted!
+    </div>
+}
+
 @code {
-    private decimal? amount; // Nullable decimal to avoid initial 0 display
+    private decimal? amount = 0; // Nullable decimal to avoid initial 0 display
     private string category = string.Empty;
     private DateTime date = DateTime.Now;
     private string type = "Expense";
+    private bool showConfirmation = false; // Control variable for showing confirmation
+
 
     private async Task SubmitTransaction()
     {
@@ -50,11 +60,18 @@
 
         await TransactionService.AddTransactionAsync(transaction);
 
+        // Show confirmation message
+        showConfirmation = true;
+
         // Reset form fields after submission
-        amount = null;
+        amount = 0;
         category = string.Empty;
         date = DateTime.Now;
         type = "Expense";
+
+        // Hide the confirmation message after a short delay
+        await Task.Delay(3000); // Delay for 3 seconds
+        showConfirmation = false;
     }
 
     // Clear the amount input when it gains focus
